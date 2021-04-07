@@ -140,9 +140,9 @@ iris_labels = 1*cellfun(@(x)isequal(x,'versicolor'),species)+2*cellfun(@(x)isequ
 [meas_norm, mu, sigma] = featureNormalize(meas);
 
 % Get the data for each class
-IRIS1 = 			%Samples of Class 0
-IRIS2 = 			%Samples of Class 1
-IRIS3 = 			%Samples of Class 2
+IRIS1 = meas_norm(iris_labels==0, :);   %Samples of Class 0
+IRIS2 = meas_norm(iris_labels==1, :);	%Samples of Class 1
+IRIS3 = meas_norm(iris_labels==2, :);	%Samples of Class 1
 
 
 %  Visualize the example dataset

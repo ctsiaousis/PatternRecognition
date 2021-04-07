@@ -6,14 +6,18 @@ function X_rec = recoverDataPCA(Z, U, K)
 %   approximate reconstruction in X_rec.
 %
 
-% You need to return the following variables correctly.
-X_rec = zeros(size(Z, 1), size(U, 1));
+    rows = size(Z, 1);
+    X_rec = zeros(rows, size(U, 1));
 
 % ====================== YOUR CODE HERE ======================
 % Instructions: Compute the approximation of the data by projecting back
 %               onto the original space using the top K eigenvectors in U.
-%               
+%
+%
 
+    for i = 1 : rows
+        X_rec(i,:) = Z(i,:) * U(:,1:K)';
+    end
 
 % =============================================================
 

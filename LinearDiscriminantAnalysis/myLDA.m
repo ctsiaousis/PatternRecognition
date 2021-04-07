@@ -3,8 +3,6 @@ function A = myLDA(Samples, Labels, NewDim)
 %   Samples: The Data Samples 
 %   Labels: The labels that correspond to the Samples
 %   NewDim: The New Dimension of the Feature Vector after applying LDA
-
-	A=zeros(NumFeatures,NewDim);
     
 	[NumSamples NumFeatures] = size(Samples);
     NumLabels = length(Labels);
@@ -15,29 +13,40 @@ function A = myLDA(Samples, Labels, NewDim)
     Classes = unique(Labels);
     NumClasses = length(Classes)  %The number of classes
 
+    m0 = 0;
+    Sw = zeros(size(Samples,2),size(Samples,2));
+    St = cov(Samples); %total covariance matrix or total Scatter
+
     %For each class i
 	%Find the necessary statistics
-    
-    %Calculate the Class Prior Probability
-	P(i)=
-    %Calculate the Class Mean 
-	mu(i,:)
-    %Calculate the Within Class Scatter Matrix
-	Sw=
-    %Calculate the Global Mean
-	m0=
-
+    for i=1:NumClasses
+        %Calculate the Class Prior Probability
+        P(i)= sum(Labels==i-1)/NumSamples;
+        %Calculate the Class Mean 
+        mu(i,:) = mean(Samples(Labels==i-1,:));
+        %Calculate the Within Class Scatter Matrix
+        Sw = Sw + (P(i)*cov(Samples(Labels==i-1,:)));
+        %Calculate the Global Mean
+        m0 = mean(NumFeatures*mu(i,:))+m0;
+    end
   
     %Calculate the Between Class Scatter Matrix
-	Sb= 
+	Sb = St-Sw;
     
     %Eigen matrix EigMat=inv(Sw)*Sb
     EigMat = inv(Sw)*Sb;
     
     %Perform Eigendecomposition
-
+    [V,D] = eig(EigMat);
     
     %Select the NewDim eigenvectors corresponding to the top NewDim
     %eigenvalues (Assuming they are NewDim<=NumClasses-1)
 	%% You need to return the following variable correctly.
 	A=zeros(NumFeatures,NewDim);  % Return the LDA projection vectors
+    
+    assert(NewDim<=NumClasses-1,'Rescaling Error')
+    
+    lambda = diag(D);
+    [~,SortOrder] = sort(lambda,'descend');
+    A = V(:,SortOrder);
+

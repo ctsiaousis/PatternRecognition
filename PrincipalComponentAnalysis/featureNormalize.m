@@ -6,12 +6,13 @@ function [X_norm, mu, sigma] = featureNormalize(X)
 %   working with learning algorithms.
 
 
-mu = zeros(1,size(X,2));% mean of each column (feature)
+cols = size(X, 2);
 
-sigma = zeros(1,size(X,2));% standart deviation of each column
+mu = zeros(1, cols);    % mean of each column (feature)
+sigma = zeros(1, cols); % standart deviation of each column
 X_norm = zeros(size(X));% normalize each column independently
 
-for i = 1: size(X, 2) %foreach column
+for i = 1 : cols
     mu(:,i) = mean(X(:, i));
     sigma(:,i) = std(X(:, i));
     X_norm(:, i) = (X(:, i) - mu(1,i) ) / sigma(1,i);

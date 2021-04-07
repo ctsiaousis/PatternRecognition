@@ -17,7 +17,8 @@ S = zeros(n);
 %
 % Note that the dataset X is normalized, when calculating the covariance
 
-
+cov_matrix = (X'*X);
+[U,S,~] = svd(cov_matrix);
 
 
 % =========================================================================

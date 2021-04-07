@@ -13,6 +13,7 @@ Z = zeros(size(X, 1), K);
 % Instructions: Compute the projection of the data using only the top K 
 %               eigenvectors in U (first K columns). 
 
+Z = X * U(:,1:K);
 
 % =============================================================
 
