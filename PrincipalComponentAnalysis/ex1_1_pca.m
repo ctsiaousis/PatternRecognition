@@ -65,7 +65,7 @@ pause;
 
 %  First estimate the variance contribution of each principal component
 PCvariance = (S)/trace(S);
-fprintf(' PCvariance = %f %f \n', PCvariance(1,1), PCvariance(2,1));
+fprintf(' PCvariance = %f %f \n', PCvariance(1,1), PCvariance(2,2));
 fprintf('\n(you should expect to see 0.8678 and 0.1322)\n');
 
 %  Apply PCA to perform Dimensionality Reduction
