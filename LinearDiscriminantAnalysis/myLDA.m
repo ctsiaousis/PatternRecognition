@@ -21,11 +21,11 @@ function A = myLDA(Samples, Labels, NewDim)
 	%Find the necessary statistics
     for i=1:NumClasses
         %Calculate the Class Prior Probability
-        P(i)= sum(Labels==i-1)/NumSamples;
+        P = sum(Labels==i-1)/NumSamples;
         %Calculate the Class Mean 
         mu(i,:) = mean(Samples(Labels==i-1,:));
         %Calculate the Within Class Scatter Matrix
-        Sw = Sw + (P(i)*cov(Samples(Labels==i-1,:)));
+        Sw = Sw + (P*cov(Samples(Labels==i-1,:)));
         %Calculate the Global Mean
         m0 = mean(NumFeatures*mu(i,:))+m0;
     end
@@ -46,7 +46,21 @@ function A = myLDA(Samples, Labels, NewDim)
     
     assert(NewDim<=NumClasses-1,'Rescaling Error')
     
+    % Sort the eigenvectors according to their corresponding eigenvalues (descending order)
+% D = diag(D);
+% [~, index] = sort(-D);
+% D = D(index);
+% V = V(:, index);
+% A = V(:,1:NumClasses-1);
+
+    
     lambda = diag(D);
     [~,SortOrder] = sort(lambda,'descend');
-    A = V(:,SortOrder);
-
+%     A = V(:,SortOrder);
+    V = V(:, SortOrder);
+    A = V(:,1:NewDim);
+%     reshape(A,1,[])
+    disp(A)
+    disp(V)
+%     assert(NumFeatures==size(A,1)&&NewDim==size(A,2),'whatsu doin');
+end
