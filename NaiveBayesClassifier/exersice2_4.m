@@ -29,7 +29,7 @@ for i=0:9
     imagesc(imageToDisp); colorbar
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Part 3
 for d=0:9
     for i=1:500
         eval(sprintf('curTestClass = test%i;',d));
@@ -45,445 +45,49 @@ for d=0:9
         tst9 = curTestClass(i,:) * log(p9)' + (1 - curTestClass(i,:)) * log(1 - p9)';
         eval(sprintf('ltst%i(:,%i) = [tst0 tst1 tst2 tst3 tst4 tst5 tst6 tst7 tst8 tst9];',d,i));
     end
-end
-
-for d=0:9
-    eval(sprintf('index = (max(ltst%i));',d));
+    eval(sprintf('index = max(ltst%i);',d));
     index = repmat(index,[10],[1]); %repeat row 10 times
     eval(sprintf('[x%i,y%i]= find(ltst%i==index);',d,d,d));
+    %x=x-1 for better corespondance to digits
+    eval(sprintf('x%i = x%i - 1;',d,d));
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ------------------------------ACCURACY------------------------------
 
 for d=0:9
-eval(sprintf('accuracy%i = sum(x%i(x%i==1)) / length(x%i)',d,d,d,d));
+%size of x{digit} where x{digit}=={digit} divide by total size
+eval(sprintf('accuracy%i = size(x%i(x%i==%i),1) / size(x%i,1);',d,d,d,d,d));
+end
+accuracyMatrix = [  accuracy0; accuracy1; accuracy2; accuracy3; ...
+                    accuracy4; accuracy5; accuracy6; accuracy7; ...
+                    accuracy8; accuracy9];
+f = figure;
+uit = uitable(f, 'Data', accuracyMatrix);
+uit.RowName={'digit 0'; 'digit 1'; 'digit 2'; 'digit 3'; 'digit 4'; ...
+            'digit 5'; 'digit 6'; 'digit 7'; 'digit 8'; 'digit 9'};
+uit.ColumnName={'Accuracy'; };
+uit.Position = [50 50 uit.Extent(3) uit.Extent(4)];
+
+%% -------------------------CONFUSION MATRICIES-------------------------
+
+for d=0:9
+eval(sprintf('curX = x%i;',d));
+eval(sprintf('len = size(curX,1);'));
+eval(sprintf(['confMat%i = [size(curX(curX==0),1)/len; '...
+    'size(curX(curX==1),1)/len; size(curX(curX==2),1)/len; size(curX(curX==3),1)/len; '...
+    'size(curX(curX==4),1)/len; size(curX(curX==5),1)/len; size(curX(curX==6),1)/len; '...
+    'size(curX(curX==7),1)/len; size(curX(curX==8),1)/len; size(curX(curX==9),1)/len;];'],d));
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%.
-zeros = 0;
-ones = 0;
-twos = 0;
-threes = 0;
-fours = 0;
-fives = 0;
-six = 0;
-sevens = 0;
-eights = 0;
-nines = 0;
-for i=1:500
-    if x0(i)==2
-        ones = ones+1;
-    end
-    if x0(i)==3
-        twos = twos+1;
-    end
-    if x0(i)==4
-        threes = threes+1;
-    end
-    if x0(i)==5
-        fours = fours+1;
-    end
-    if x0(i)==6
-        fives = fives+1;
-    end
-    if x0(i)==7
-        six = six+1;
-    end
-    if x0(i)==8
-        sevens = sevens+1;
-    end
-    if x0(i)==9
-        eights = eights+1;
-    end
-    if x0(i)==10
-        nines = nines+1;
-    end
-end
+confusionMatrix = [ confMat0 confMat1 confMat2 confMat3 ...
+                    confMat4 confMat5 confMat6 confMat7 ...
+                    confMat8 confMat9];
+               
+f = figure;
+uit = uitable(f, 'Data', confusionMatrix);
+uit.RowName={'digit 0'; 'digit 1'; 'digit 2'; 'digit 3'; 'digit 4'; ...
+            'digit 5'; 'digit 6'; 'digit 7'; 'digit 8'; 'digit 9'};
+uit.ColumnName={'digit 0'; 'digit 1'; 'digit 2'; 'digit 3'; 'digit 4'; ...
+            'digit 5'; 'digit 6'; 'digit 7'; 'digit 8'; 'digit 9'};
+uit.Position = [50 50 uit.Extent(3) uit.Extent(4)];
 
-confusion_matrix_zero = [ones,twos,threes,fours,fives,six,sevens,eights,nines];
-
-zeros = 0;
-ones = 0;
-twos = 0;
-threes = 0;
-fours = 0;
-fives = 0;
-six = 0;
-sevens = 0;
-eights = 0;
-nines = 0;
-for i=1:500
-    if x1(i)==3
-        twos = twos+1;
-    end
-    if x1(i)==1
-        zeros = zeros+1;
-    end
-    if x1(i)==4
-        threes = threes+1;
-    end
-    if x1(i)==5
-        fours = fours+1;
-    end
-    if x1(i)==6
-        fives = fives+1;
-    end
-    if x1(i)==7
-        six = six+1;
-    end
-    if x1(i)==8
-        sevens = sevens+1;
-    end
-    if x1(i)==9
-        eights = eights+1;
-    end
-    if x1(i)==10
-        nines = nines+1;
-    end
-end
-
-confusion_matrix_one = [zeros,twos,threes,fours,fives,six,sevens,eights,nines];
-
-zeros = 0;
-ones = 0;
-twos = 0;
-threes = 0;
-fours = 0;
-fives = 0;
-six = 0;
-sevens = 0;
-eights = 0;
-nines = 0;
-for i=1:500
-
-    if x2(i)==1
-        zeros = zeros+1;
-    end
-    if x2(i)==2
-        ones = ones+1;
-    end
-    if x2(i)==4
-        threes = threes+1;
-    end
-    if x2(i)==5
-        fours = fours+1;
-    end
-    if x2(i)==6
-        fives = fives+1;
-    end
-    if x2(i)==7
-        six = six+1;
-    end
-    if x2(i)==8
-        sevens = sevens+1;
-    end
-    if x2(i)==9
-        eights = eights+1;
-    end
-    if x2(i)==10
-        nines = nines+1;
-    end
-end
-
-confusion_matrix_two = [zeros,ones,threes,fours,fives,six,sevens,eights,nines];
-
-zeros = 0;
-ones = 0;
-twos = 0;
-threes = 0;
-fours = 0;
-fives = 0;
-six = 0;
-sevens = 0;
-eights = 0;
-nines = 0;
-for i=1:500
-
-    if x3(i)==1
-        zeros = zeros+1;
-    end
-    if x3(i)==2
-        ones = ones+1;
-    end
-    if x3(i)==3
-        twos = twos+1;
-    end
-    if x3(i)==5
-        fours = fours+1;
-    end
-    if x3(i)==6
-        fives = fives+1;
-    end
-    if x3(i)==7
-        six = six+1;
-    end
-    if x3(i)==8
-        sevens = sevens+1;
-    end
-    if x3(i)==9
-        eights = eights+1;
-    end
-    if x3(i)==10
-        nines = nines+1;
-    end
-end
-
-confusion_matrix_three = [zeros,ones,twos,fours,fives,six,sevens,eights,nines];
-
-zeros = 0;
-ones = 0;
-twos = 0;
-threes = 0;
-fours = 0;
-fives = 0;
-six = 0;
-sevens = 0;
-eights = 0;
-nines = 0;
-for i=1:500
-
-    if x4(i)==1
-        zeros = zeros+1;
-    end
-    if x4(i)==2
-        ones = ones+1;
-    end
-    if x4(i)==3
-        twos = twos+1;
-    end
-    if x4(i)==4
-        threes = threes+1;
-    end
-    if x4(i)==6
-        fives = fives+1;
-    end
-    if x4(i)==7
-        six = six+1;
-    end
-    if x4(i)==8
-        sevens = sevens+1;
-    end
-    if x4(i)==9
-        eights = eights+1;
-    end
-    if x4(i)==10
-        nines = nines+1;
-    end
-end
-
-confusion_matrix_four = [zeros,ones,twos,threes,fives,six,sevens,eights,nines];
-
-zeros = 0;
-ones = 0;
-twos = 0;
-threes = 0;
-fours = 0;
-fives = 0;
-six = 0;
-sevens = 0;
-eights = 0;
-nines = 0;
-for i=1:500
-
-    if x5(i)==1
-        zeros = zeros+1;
-    end
-    if x5(i)==2
-        ones = ones+1;
-    end
-    if x5(i)==3
-        twos = twos+1;
-    end
-    if x5(i)==4
-        threes = threes+1;
-    end
-    if x5(i)==5
-        fours = fours+1;
-    end
-    if x5(i)==7
-        six = six+1;
-    end
-    if x5(i)==8
-        sevens = sevens+1;
-    end
-    if x5(i)==9
-        eights = eights+1;
-    end
-    if x5(i)==10
-        nines = nines+1;
-    end
-end
-
-confusion_matrix_five = [zeros,ones,twos,threes,fours,six,sevens,eights,nines];
-
-zeros = 0;
-ones = 0;
-twos = 0;
-threes = 0;
-fours = 0;
-fives = 0;
-six = 0;
-sevens = 0;
-eights = 0;
-nines = 0;
-for i=1:500
-
-    if x6(i)==1
-        zeros = zeros+1;
-    end
-    if x6(i)==2
-        ones = ones+1;
-    end
-    if x6(i)==3
-        twos = twos+1;
-    end
-    if x6(i)==4
-        threes = threes+1;
-    end
-    if x6(i)==5
-        fours = fours+1;
-    end
-    if x6(i)==6
-        fives = fives+1;
-    end
-    if x6(i)==8
-        sevens = sevens+1;
-    end
-    if x6(i)==9
-        eights = eights+1;
-    end
-    if x6(i)==10
-        nines = nines+1;
-    end
-end
-
-confusion_matrix_six = [zeros,ones,twos,threes,fours,fives,sevens,eights,nines];
-
-zeros = 0;
-ones = 0;
-twos = 0;
-threes = 0;
-fours = 0;
-fives = 0;
-six = 0;
-sevens = 0;
-eights = 0;
-nines = 0;
-for i=1:500
-
-    if x7(i)==1
-        zeros = zeros+1;
-    end
-    if x7(i)==2
-        ones = ones+1;
-    end
-    if x7(i)==3
-        twos = twos+1;
-    end
-    if x7(i)==4
-        threes = threes+1;
-    end
-    if x7(i)==5
-        fours = fours+1;
-    end
-    if x7(i)==6
-        fives = fives+1;
-    end
-    if x7(i)==7
-        six = six+1;
-    end
-    if x7(i)==9
-        eights = eights+1;
-    end
-    if x7(i)==10
-        nines = nines+1;
-    end
-end
-
-confusion_matrix_seven = [zeros,ones,twos,threes,fours,fives,six,eights,nines];
-
-zeros = 0;
-ones = 0;
-twos = 0;
-threes = 0;
-fours = 0;
-fives = 0;
-six = 0;
-sevens = 0;
-eights = 0;
-nines = 0;
-for i=1:500
-
-    if x8(i)==1
-        zeros = zeros+1;
-    end
-    if x8(i)==2
-        ones = ones+1;
-    end
-    if x8(i)==3
-        twos = twos+1;
-    end
-    if x8(i)==4
-        threes = threes+1;
-    end
-    if x8(i)==5
-        fours = fours+1;
-    end
-    if x8(i)==6
-        fives = fives+1;
-    end
-    if x8(i)==7
-        six = six+1;
-    end
-    if x8(i)==8
-        sevens = sevens+1;
-    end
-    if x8(i)==10
-        nines = nines+1;
-    end
-end
-
-confusion_matrix_eight = [zeros,ones,twos,threes,fours,fives,six,sevens,nines];
-
-zeros = 0;
-ones = 0;
-twos = 0;
-threes = 0;
-fours = 0;
-fives = 0;
-six = 0;
-sevens = 0;
-eights = 0;
-nines = 0;
-for i=1:500
-
-    if x9(i)==1
-        zeros = zeros+1;
-    end
-    if x9(i)==2
-        ones = ones+1;
-    end
-    if x9(i)==3
-        twos = twos+1;
-    end
-    if x9(i)==4
-        threes = threes+1;
-    end
-    if x9(i)==5
-        fours = fours+1;
-    end
-    if x9(i)==6
-        fives = fives+1;
-    end
-    if x9(i)==7
-        six = six+1;
-    end
-    if x9(i)==8
-        sevens = sevens+1;
-    end
-    if x9(i)==9
-        eights = eights+1;
-    end
-end
-
-confusion_matrix_nine = [zeros,ones,twos,threes,fours,fives,six,sevens,eights];
