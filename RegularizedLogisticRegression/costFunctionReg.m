@@ -18,7 +18,7 @@ grad = zeros(size(theta));
 %               derivatives of the cost w.r.t. each parameter in theta
 
 pred = sigmoid(X*theta);
-error = -1*y.*(log(pred))-(1-y).*(log(1-pred));
+error = -(1*y.*(log(pred))+(1-y).*(log(1-pred)));
 
 reg = (lambda/(2*m))*sum((theta(2:size(theta,1),1).^2));
 J = ((1/m)*sum(error)) + reg;

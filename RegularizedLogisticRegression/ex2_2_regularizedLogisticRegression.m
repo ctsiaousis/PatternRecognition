@@ -40,7 +40,6 @@ ylabel('Microchip Test 2')
 legend('y = 1', 'y = 0')
 hold off;
 
-
 %% =========== Part 1: Regularized Logistic Regression ============
 %  In this part, you are given a dataset with data points that are not
 %  linearly separable. However, you would still like to use logistic 
@@ -87,29 +86,29 @@ pause;
 initial_theta = zeros(size(X, 2), 1);
 
 % Set regularization parameter lambda to 1 (you should vary this)
-lambda = 1;
+lambda = 0;
 
 % Set Options
 options = optimset('GradObj', 'on', 'MaxIter', 400);
 
-% Optimize
-[theta, J, exit_flag] = fminunc(@(t)(costFunctionReg(t, X, y, lambda)), initial_theta, options);
+for lambda = [0 1 10 100]
+    % Optimize
+    [theta, J, exit_flag] = fminunc(@(t)(costFunctionReg(t, X, y, lambda)), initial_theta, options);
+    
+    % Plot Boundary
+    plotDecisionBoundary(theta, X, y);
+    hold on;
+    title(sprintf('lambda = %g', lambda))
 
-% Plot Boundary
-plotDecisionBoundary(theta, X, y);
-hold on;
-title(sprintf('lambda = %g', lambda))
+    % Labels and Legend
+    xlabel('Microchip Test 1')
+    ylabel('Microchip Test 2')
+    legend('y = 1', 'y = 0', 'Decision boundary')
+    hold off;
 
-% Labels and Legend
-xlabel('Microchip Test 1')
-ylabel('Microchip Test 2')
+    % Compute accuracy on our training set
+    p = predict(theta, X);
+    fprintf('for lambda=%d, Train Accuracy: %f\n', lambda, mean(double(p == y)) * 100);
 
-legend('y = 1', 'y = 0', 'Decision boundary')
-hold off;
-
-% Compute accuracy on our training set
-p = predict(theta, X);
-
-fprintf('Train Accuracy: %f\n', mean(double(p == y)) * 100);
-
+end
 
