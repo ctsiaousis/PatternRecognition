@@ -76,5 +76,5 @@ plot(x1, x2  , 'k')
 plot(x1, xPos, 'b')  %Plot the Margin of class +1
 plot(x1, xNeg, 'r')  %Plot the Margin of class -1
 hold off
-
+xlabel(sprintf('C = %d', C))
 

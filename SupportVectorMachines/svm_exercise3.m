@@ -77,5 +77,4 @@ for x1 = -1:0.01:1
     end
 end
 hold off
-
-
+xlabel(sprintf('C = %d', C))

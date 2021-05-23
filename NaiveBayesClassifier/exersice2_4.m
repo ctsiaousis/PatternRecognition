@@ -4,7 +4,7 @@ A = reshape(train3(43, :), 28, 28)';
 imagesc(A); colorbar
 
 %% Calculate p0..p9
-% TODO: change the eval to ceil and ceilfun
+% TODO: change the eval to cell
 e = 0.0000001;
 for i = 0:9
     eval(sprintf('n = size(train%i,1);',i));
@@ -13,13 +13,15 @@ for i = 0:9
     eval(sprintf('p%i(p%i==1) = 1-e;',i,i));
 end
 
+%% Calculate lpx(p0)..lpx(p9)
 for d=0:9
     for i=1:500
         logP = 'lpxp%i(%i,:) = train%i(%i,:)*log(p%i)''+(1-train%i(%i,:))*log(1-p%i)'';';
         eval(sprintf(logP,d,i,d,i,d,d,i,d));
     end
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Plot
 figure
 for i=0:9
     eval(sprintf('image_%i = train%i''*lpxp%i;',i,i,i));
@@ -61,12 +63,6 @@ end
 accuracyMatrix = [  accuracy0; accuracy1; accuracy2; accuracy3; ...
                     accuracy4; accuracy5; accuracy6; accuracy7; ...
                     accuracy8; accuracy9];
-f = figure;
-uit = uitable(f, 'Data', accuracyMatrix);
-uit.RowName={'digit 0'; 'digit 1'; 'digit 2'; 'digit 3'; 'digit 4'; ...
-            'digit 5'; 'digit 6'; 'digit 7'; 'digit 8'; 'digit 9'};
-uit.ColumnName={'Accuracy'; };
-uit.Position = [50 50 uit.Extent(3) uit.Extent(4)];
 
 %% -------------------------CONFUSION MATRICIES-------------------------
 
@@ -83,6 +79,14 @@ confusionMatrix = [ confMat0 confMat1 confMat2 confMat3 ...
                     confMat4 confMat5 confMat6 confMat7 ...
                     confMat8 confMat9];
                
+%% Display the matricies
+f = figure;
+uit = uitable(f, 'Data', accuracyMatrix);
+uit.RowName={'digit 0'; 'digit 1'; 'digit 2'; 'digit 3'; 'digit 4'; ...
+            'digit 5'; 'digit 6'; 'digit 7'; 'digit 8'; 'digit 9'};
+uit.ColumnName={'Accuracy'; };
+uit.Position = [50 50 uit.Extent(3) uit.Extent(4)];
+
 f = figure;
 uit = uitable(f, 'Data', confusionMatrix);
 uit.RowName={'digit 0'; 'digit 1'; 'digit 2'; 'digit 3'; 'digit 4'; ...
@@ -90,4 +94,3 @@ uit.RowName={'digit 0'; 'digit 1'; 'digit 2'; 'digit 3'; 'digit 4'; ...
 uit.ColumnName={'digit 0'; 'digit 1'; 'digit 2'; 'digit 3'; 'digit 4'; ...
             'digit 5'; 'digit 6'; 'digit 7'; 'digit 8'; 'digit 9'};
 uit.Position = [50 50 uit.Extent(3) uit.Extent(4)];
-
