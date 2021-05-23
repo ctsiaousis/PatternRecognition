@@ -41,7 +41,8 @@ beq = 0;
 lambda = quadprog(H, f, A, b, Aeq, beq,...
     zeros(n,1), -C * f); % Find the Lagrange multipliers
 
-indices = find(lambda > 0.0001); % Find the support vectors
+% note the extra restriction in order to maximize the LaGrange
+indices = find(lambda > 0.0001 & lambda < C); % Find the support vectors
 Xsup = X(indices, :); % The support vectors only 
 ysup = y(indices, :);
 lambdasup = lambda(indices);
