@@ -21,7 +21,9 @@ Y_all = np.array(target_list, dtype=np.float32)   # Vector of target values. sha
 N = X_all.shape[0] # Number of examples
 
 # Normalize input data
-# your code here
+m = np.mean(X_all)
+s = np.std(X_all)
+X_all = (X_all-m)/s
 
 
 # Define the model
@@ -32,7 +34,7 @@ learning_rate = 0.001
 
 
 def sigmoid(z):
-    # your code here
+    return 1 / (1 + np.exp(-z))
 
 class NeuralNetwork:
     def __init__(self, input_depth, output_depth, learning_rate):
@@ -41,17 +43,24 @@ class NeuralNetwork:
         self.learning_rate = learning_rate
 
     def forward(self, x):
-        # your code here
+        return sigmoid(np.mat(x)*np.mat(self.W)+self.b)
 
     def backward(self, X, Y, Y_predicted):
-        # your code here  
+        m   = X.shape[0]
+        dZ  = Y_predicted - Y
+        dW  = 1/m * np.dot(dZ.T,X)
+        db  = 1/m * np.sum(dZ)
+        return dW , db
 
     def cross_entropy(self, Y, Y_predicted):
-        # your code here
+        logY        = np.multiply(Y, np.log(Y_predicted))
+        log1minusY  = np.multiply((1-Y), np.log(1-Y_predicted))
+        return -np.mean(logY + log1minusY)
 
 
     def update_weights(self, d_CE_d_W, d_CE_d_b):
-        # your code here   
+        self.W = self.W - np.dot(self.learning_rate,d_CE_d_W).reshape(2,1) #dot product shape depends on input matricies
+        self.b = self.b - self.learning_rate * d_CE_d_b
 
 
 nn = NeuralNetwork(num_features, output_depth, learning_rate)
@@ -83,10 +92,12 @@ for epoch in range(num_epochs):
 example = (np.array([[45, 85]], dtype=np.float32) - m)/s
 
 print('Predicting the probabilities of example [45, 85]')
-# your code here
+print("Probability = ", nn.forward(example))
+
+# TODO: find out accuracy and print learning curve
 
 # Predict the accuracy of the training examples
-accuracy_np = .... # your code here
+# accuracy_np = .... # your code here
 
-print('accuracy = ', accuracy_np) 
+# print('accuracy = ', accuracy_np)
 
