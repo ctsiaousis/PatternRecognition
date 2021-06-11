@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Load data
 fid = open('exam_scores_data1.txt', 'r')
@@ -36,6 +37,7 @@ learning_rate = 0.001
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
+
 class NeuralNetwork:
     def __init__(self, input_depth, output_depth, learning_rate):
         self.W = np.sqrt(2.0/(input_depth + output_depth))*np.random.rand(input_depth, output_depth).astype(np.float32)
@@ -62,11 +64,16 @@ class NeuralNetwork:
         self.W = self.W - np.dot(self.learning_rate,d_CE_d_W).reshape(2,1) #dot product shape depends on input matricies
         self.b = self.b - self.learning_rate * d_CE_d_b
 
+    def predict(self, x):
+        prediction = self.forward(x)
+        for i in range(np.size(prediction)):
+            prediction[i] = prediction[i] > 0.5
+        return prediction
 
 nn = NeuralNetwork(num_features, output_depth, learning_rate)
 
 # Training the model
-num_epochs = 55
+num_epochs = 85
 num_batches = N - batch_size + 1
 
 for epoch in range(num_epochs):
@@ -92,12 +99,38 @@ for epoch in range(num_epochs):
 example = (np.array([[45, 85]], dtype=np.float32) - m)/s
 
 print('Predicting the probabilities of example [45, 85]')
-print("Probability = ", nn.forward(example))
+print("Probability = ", float(nn.forward(example)))
 
-# TODO: find out accuracy and print learning curve
+Y_predicted = nn.predict(X_all)
+
+correct = np.sum(Y_all == Y_predicted)
 
 # Predict the accuracy of the training examples
-# accuracy_np = .... # your code here
+accuracy_np = correct / Y_all.shape[0]
 
-# print('accuracy = ', accuracy_np)
+print('accuracy = ', accuracy_np)
 
+
+ones = np.argwhere(Y_all==1)
+zeros = np.argwhere(Y_all==0)
+plt.figure()
+plt.subplot(2,1,1)
+plt.xticks([]), plt.yticks([])
+plt.title("Original dataset")
+plt.scatter(X_all[ones,0], X_all[ones,1], label='pass')
+plt.scatter(X_all[zeros,0], X_all[zeros,1], label='fail')
+plt.xlabel("Grade 1")
+plt.ylabel("Grade 2")
+plt.legend()
+
+plt.subplot(2,1,2)
+plt.xticks([]), plt.yticks([])
+ones = np.argwhere(Y_predicted==1)
+zeros = np.argwhere(Y_predicted==0)
+plt.title('NeuralNetwork prediction with accuracy %.2f' %accuracy_np)
+plt.scatter(X_all[ones,0], X_all[ones,1], label='pass')
+plt.scatter(X_all[zeros,0], X_all[zeros,1], label='fail')
+plt.xlabel("Grade 1")
+plt.ylabel("Grade 2")
+plt.legend()
+plt.show()
