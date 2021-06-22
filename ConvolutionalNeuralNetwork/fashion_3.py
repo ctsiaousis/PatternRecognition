@@ -4,6 +4,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras import layers , models
 
 # Helper libraries
 import numpy as np
@@ -11,6 +12,8 @@ import matplotlib.pyplot as plt
 
 from plots import plot_some_data, plot_some_predictions
 
+#execution time is also compared for different optimizers
+import time
 
 fashion_mnist = keras.datasets.fashion_mnist
 
@@ -26,16 +29,42 @@ train_images = train_images / 255.0
 
 test_images = test_images / 255.0
 
-train_images_reshaped = # reshape to mum_train_images X height X width X channels, where channels = 1
-test_images_reshaped = # reshape
+train_images_reshaped = train_images.reshape(-1,28,28,1) # reshape to mum_train_images X height X width X channels, where channels = 1
+test_images_reshaped = test_images.reshape(-1,28,28,1) # reshape
 
 
 # Build the model
 # Building the neural network requires configuring the layers of the model, then compiling the model.
 
-model = # fill the model
+model = models.Sequential()# fill the model
+# Conv1
+model.add(layers.Conv2D(32, (3, 3), padding='same', activation=None, input_shape=(28, 28, 1)))
+# Conv2
+model.add(layers.Conv2D(32, (3, 3), padding='same', activation=None, input_shape=(28, 28, 1)))
+# Max Pool-1
+model.add(layers.MaxPooling2D((2, 2),padding='valid'))
+# Conv3
+model.add(layers.Conv2D(64, (3, 3), padding='same', activation=None, input_shape=(14, 14, 32)))
+# Conv4
+model.add(layers.Conv2D(64, (3, 3), padding='same', activation=None, input_shape=(14, 14, 64)))
+# Max Pool-2
+model.add(layers.MaxPooling2D((2, 2),padding='valid'))
+# Conv5
+model.add(layers.Conv2D(128, (3, 3), padding='same', activation=None, input_shape=(7, 7, 64)))
+# Max Pool-3
+model.add(layers.MaxPooling2D((2, 2),padding='valid'))
+# Flat Layer
+model.add(layers.Flatten())
+# Dense-1
+model.add(layers.Dense(200))
+# Dense-2
+model.add(layers.Dense(10))
 
-model.compile(optimizer='adam',
+model.summary() #prints a summary of the model's architecture
+
+start_time = time.time()
+optim = 'adam'
+model.compile(optimizer=optim,
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
@@ -47,7 +76,16 @@ model.compile(optimizer='adam',
 #   3. You ask the model to make predictions about a test set—in this example, the test_images array.
 #   4. Verify that the predictions match the labels from the test_labels array.
 
-model.fit(train_images_reshaped, train_labels, epochs=50, validation_data=(test_images_reshaped, test_labels))
+info = model.fit(train_images_reshaped, train_labels, epochs=50, validation_data=(test_images_reshaped, test_labels))
+
+plt.plot(info.history['accuracy'], label='accuracy')
+plt.plot(info.history['val_accuracy'], label = 'val_accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.grid()
+plt.legend()
+plt.title("Execution time with %s optimizer: %s seconds ---" %(optim, (time.time() - start_time)))
+plt.show()
 
 # Evaluate accuracy
 test_loss, test_acc = model.evaluate(test_images_reshaped,  test_labels, verbose=2)
